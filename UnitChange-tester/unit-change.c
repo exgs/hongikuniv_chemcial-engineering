@@ -16,6 +16,7 @@ const double HP_W = 745;
  
 const double lbf_N = 4.4482;
 const double lbf_ft__J = 1.343;
+const double atm_ft3__BTU = 2.7195;
 
 const double when_0C_R = 491.67;
 
@@ -37,6 +38,7 @@ void print_const()
 	printf("\n");
 	printf("%lf\n",lbf_N);
 	printf("%lf\n",lbf_ft__J);
+	printf("%lf\n",atm_ft3__BTU);
 }
 
 int main()
@@ -93,6 +95,10 @@ int main()
 	printf("%d. %d lbf X ft = ? J\n",++i, value);
 	scanf("%lf",&temp);
 	printf("A : %lf\n",value*lbf_ft__J);
+	printf("-----------------------------------\n");
+	printf("%d. %d atm X ft^3 = ? BTU\n",++i, value);
+	scanf("%lf",&temp);
+	printf("A : %lf\n",value*atm_ft3__BTU);
 	printf("-----------------------------------\n");
 	
 	printf("%d. temperature : 0 C = ? R\n",++i);
