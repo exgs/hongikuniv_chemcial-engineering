@@ -257,7 +257,7 @@ void pr()
 	value.omega = 0.07780;
 	value.psi = 0.45724;
 	value.Zc = 0.30740;
-	double (*f) (double, double) = srk_a; // 함수포인터 선언
+	double (*f) (double, double) = pr_a; // 함수포인터 선언
 	value.a_eqn = f; // 함수 포인터를 변수에 담기 (void *)
 	beta =value.omega*(Pr/Tr);
 	q = value.psi/value.omega * (((double (*)(double, double))value.a_eqn)(Tr, w))/Tr;
@@ -295,7 +295,7 @@ void pr_l()
 	value.omega = 0.07780;
 	value.psi = 0.45724;
 	value.Zc = 0.30740;
-	double (*f) (double, double) = srk_a; // 함수포인터 선언
+	double (*f) (double, double) = pr_a; // 함수포인터 선언
 	value.a_eqn = f; // 함수 포인터를 변수에 담기 (void *)
 	beta =value.omega*(Pr/Tr);
 	q = value.psi/value.omega * (((double (*)(double, double))value.a_eqn)(Tr, w))/Tr;
