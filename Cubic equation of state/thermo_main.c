@@ -70,4 +70,5 @@ int main()
 	printf("==========================================================\n");
 	printf("Contact me any time if you find some error!\n");
 	printf("https://github.com/exgs/hongikuniv_chemical-engineering \nsteniipion2@naver.com\n");
+	system("cmd /k");
 }
