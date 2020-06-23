@@ -26,7 +26,7 @@ void vdw()
 	printf("beta : %lf\n",beta);
 	printf("q : %lf\n",q);
 	printf("------------------------------\n\n");
-	for (size_t i = 0; i < 10; i++)
+	for (size_t i = 0; i < 30; i++)
 	{
 		Z = 1 + beta - (q*beta)*(Z-beta)/((Z + value.upsilon * beta) * (Z + value.sigma * beta));
 	}
@@ -62,9 +62,9 @@ void vdw_l()
 	printf("q : %lf\n",q);
 	printf("------------------------------\n\n");
 	Z = beta; // 최초로 넣어주는 값
-	for (size_t i = 0; i < 10; i++)
+	for (size_t i = 0; i < 30; i++)
 	{
-		Z = beta + (Z + value.upsilon * beta) * (Z + value.sigma * beta) * (1 + beta - Z) / (q * beta);
+		Z = beta + (Z + value.upsilon * beta) * (Z + value.sigma * beta) * ((1 + beta - Z) / (q * beta));
 	}
 	
 	printf("Z: %lf\n",Z);
@@ -178,7 +178,6 @@ void srk()
 	value.a_eqn = f; // 함수 포인터를 변수에 담기 (void *)
 	beta =value.omega*(Pr/Tr);
 	q = value.psi/value.omega * (((double (*)(double, double))value.a_eqn)(Tr, w))/Tr;
-	printf("q : %lf\n",q);
 	printf("q : %lf\n",q);
 	printf("beta : %lf\n",beta);
 	// printf("---------\n");
