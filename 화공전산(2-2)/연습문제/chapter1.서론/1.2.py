@@ -11,7 +11,7 @@ def print_def(n : float)->None:
 	result1 = real_func(n)
 	print(f"when x is {n}")
 	print('실제함수의 값 : %.5s' % result1) #소수 5번째자리까지만 출력
-	result2 = taylor_func(n)
+	result2 = taylor_func(n)`
 	print('테일러함수의 값 = %.5s' % result2)
 	print('실제값 - 테일러함수의 값 = %.8s' % (result1-result2)) 
 	print("-"*30)
@@ -26,7 +26,7 @@ d = 1.5
 print_def(d)
 #기준을 잡았던 x0=1 에서 멀어질수록 값의 오차가 커지는 것을 확인할 수 있다.
 
-#심화학습(그래프 그려보기)
+'''심화학습(그래프 그려보기)'''
 import numpy as np
 from matplotlib import pyplot as plt
 x = np.arange(0,5,0.1)

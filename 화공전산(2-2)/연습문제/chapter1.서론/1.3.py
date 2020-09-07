@@ -28,7 +28,7 @@ print("1.3(b)번")
 taylor_nth_order(f, 4, pi/3)
 
 
-#심화학습 그래프그려보기
+'''심화학습 그래프그려보기'''
 import numpy as np
 from matplotlib import pyplot as plt
 
