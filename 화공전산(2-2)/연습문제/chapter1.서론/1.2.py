@@ -24,5 +24,17 @@ c = 1.25
 print_def(c)
 d = 1.5
 print_def(d)
-
 #기준을 잡았던 x0=1 에서 멀어질수록 값의 오차가 커지는 것을 확인할 수 있다.
+
+#심화학습(그래프 그려보기)
+import numpy as np
+from matplotlib import pyplot as plt
+x = np.arange(0,5,0.1)
+y = real_func(x)
+taylor_y = taylor_func(x)
+fig, ax = plt.subplots()
+ax.plot(x, y, label = "real function")
+ax.plot(x, taylor_y, label = "taylor function")
+ax.plot(1,1, label = 'x0', marker='*', c = 'black')
+ax.legend()
+plt.show()
