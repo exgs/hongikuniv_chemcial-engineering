@@ -1,12 +1,6 @@
-# Chemical engineering
-
-| 주제                    | 날짜 | 프로그램 |
-| ----------------------- | ---- | -------- |
-| Cubic equation of state | 5.18 | 계산기   |
-| Unit-change tester      | 6.11 | 테스터기 |
+화학공학과 컴퓨터공학의 융합은 무엇이 될까?  
 
 
+B419111 이윤성  
+dldbstjd5@naver.com
 
----
-
-Program and Source have been uploaded
