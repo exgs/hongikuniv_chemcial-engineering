@@ -11,7 +11,7 @@ def print_def(n : float)->None:
 	result1 = real_func(n)
 	print(f"when x is {n}")
 	print('실제함수의 값 : %.5s' % result1) #소수 5번째자리까지만 출력
-	result2 = taylor_func(n)`
+	result2 = taylor_func(n)
 	print('테일러함수의 값 = %.5s' % result2)
 	print('실제값 - 테일러함수의 값 = %.8s' % (result1-result2)) 
 	print("-"*30)

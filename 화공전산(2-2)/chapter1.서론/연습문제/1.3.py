@@ -43,12 +43,6 @@ p3 = plot(f_real, label = 'cos(x)', legend = True,show=False)
 p1.extend(p2)
 p1.extend(p3)
 p1.show()
-# y = f_taylor.subs(x, x_range).evalf()
-# print(type(y))
-# print(y)
-# for i in x_range:
-# 	print(f_taylor.subs(x, i))
-# fig, ax = 
 
 '''
 참고
