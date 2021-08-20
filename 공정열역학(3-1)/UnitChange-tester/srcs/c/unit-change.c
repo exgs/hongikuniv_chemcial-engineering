@@ -57,13 +57,13 @@ int main()
 	scanf("%lf",&temp);
 	printf("A : %lf\n",value*ft_m);
 	printf("-----------------------------------\n");
-	printf("%d. %d gal = ? inch^3\n",++i, value);
-	scanf("%lf",&temp);
-	printf("A : %lf\n",value*gal_inch);
-	printf("-----------------------------------\n");
 	printf("%d. %d lbm = ? kg\n",++i, value);
 	scanf("%lf",&temp);
 	printf("A : %lf\n",value*lbm_kg);
+	printf("-----------------------------------\n");
+	printf("%d. %d gal = ? inch^3\n",++i, value);
+	scanf("%lf",&temp);
+	printf("A : %lf\n",value*gal_inch);
 	printf("-----------------------------------\n");
 	printf("%d. %d psi = ? atm\n",++i, value);
 	scanf("%lf",&temp);
