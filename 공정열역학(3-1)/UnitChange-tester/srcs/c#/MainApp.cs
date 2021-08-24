@@ -66,7 +66,7 @@ namespace MessageFilter
         private int value;
         Random rand = new Random();
         Units remain = new Units();
-        private int[] questions = {1,2,3,4,5,6,7,8,9,10};
+        private int[] questions = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
         private string[] unit_From = {"ft","lbm","gal","psi","atm",
                                         "atm","BTJ","cal","HP","lbf",
                                             "lbf * ft","atm * ft^3","C"};
@@ -118,10 +118,14 @@ namespace MessageFilter
 
         private void initInput()
         {
-            textbox_temp = new myInput();
+            //textbox_temp = new myInput();
+            Label label_temp = new Label();
+            label_temp.Text = "?";
+            label_temp.Size = new System.Drawing.Size(10, label_temp.Size.Height);
+            label_temp.Location = new System.Drawing.Point(100, 18);
             value = rand.Next(1, 10);
-            this.Controls.Add(textbox_temp);
-        
+            this.Controls.Add(label_temp);
+
         }
 
         private void MyBefore(object sender, MouseEventArgs e)
@@ -134,7 +138,7 @@ namespace MessageFilter
                 idx = 0;
                 answer.Text = $"{value} {unit_From[idx]}";
                 unit_to.Text = unit_TO[this.idx];
-                return ;
+                return;
             }
             answer.Text = $"{value} {unit_From[idx]}";
             unit_to.Text = unit_TO[this.idx];
@@ -186,7 +190,7 @@ namespace MessageFilter
             button2.Left = button1.Right + interval;
             button2.Top = Y_before_after_button;
             button2.Width -= 10;
-            button2.MouseClick+= new MouseEventHandler(MyAfter);
+            button2.MouseClick += new MouseEventHandler(MyAfter);
             this.Controls.Add(button2);
 
             Button button3 = new Button();
@@ -217,7 +221,7 @@ namespace MessageFilter
         }
 
         public MyForm()
-		{
+        {
             // UI 디자인
             initUIWindow();
             // UX 디자인
@@ -225,20 +229,20 @@ namespace MessageFilter
             // UI - 버튼디자인
             KeyPreview = true;
             initButtonDesign();
-            
+
             initInput();
             initAnswer();
         }
     }
 
     class MainApp : Form
-	{
-		static void Main(string[] args)
-		{
+    {
+        static void Main(string[] args)
+        {
 
             MyForm form = new MyForm();
             Application.AddMessageFilter(new MessageFilter());
             Application.Run(form);
         }
-	}
+    }
 }
