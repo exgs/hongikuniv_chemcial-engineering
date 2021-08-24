@@ -1,12 +1,12 @@
 # 공정열역학
 
-| 과목       | 이름                    | 날짜 | 프로그램 |
-| ---------- | ----------------------- | ---- | -------- |
-| 공정열역학 | Cubic equation of state | 5.18 | 계산기   |
-| 공정열역학 | Unit-change tester      | 6.11 | 테스터기 |
-|            |                         |      |          |
+- Unit-change tester
 
-B419111 이윤성
+  시험에서 단위변환을 빠르게 하기위한 단위변환 연습 프로그램
 
----
+- Cubic equation of state
+
+  공정열역학 3단원에서 배우는 Cubic equation of state(Vdw, RK, SRK, PR)의 계산을 돕는 프로그램
+
+
 
