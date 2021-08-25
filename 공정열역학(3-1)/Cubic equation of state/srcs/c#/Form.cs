@@ -10,113 +10,140 @@ using System.Windows.Forms;
 
 namespace cubicEquation
 {
+    delegate double alpha_oneArg(double Tr);
+    delegate double alpha_twoArg(double Tr, double w);
+    struct s_constant
+    {
+        public alpha_oneArg alpha_oneArg;
+        public alpha_twoArg alpha_twoArg;
+        public int ?alpha;
+        public double sigma;
+        public double upsilon;
+        public double omega;
+        public double psi;
+        public double Zc;
+
+        public double Pr;
+        public double Tr;
+        public double w;
+    }
+    public struct s_return
+    {
+        public double beta;
+        public double q;
+        public double z;
+    }
+
+
+    enum e_PhaseType
+    {
+        liquid,
+        vapor
+    }
+    enum e_EquType
+    {
+        vdw,
+        rk,
+        srk,
+        pr
+    }
+
     public partial class Form1 : Form
     {
-        bool vdw_output_visable = false;
-        bool rk_output_visable = false;
-        bool srk_output_visable = false;
-        bool pr_output_visable = false;
         public Form1()
         {
             InitializeComponent();
         }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
 
+        double rk_a(double Tr)
+        {
+            return (1 / Math.Sqrt(Tr));
         }
 
-        private void groupBox3_Enter(object sender, EventArgs e)
+        double srk_a(double Tr, double w)
         {
-
+            return Math.Pow((1 + (0.480 + 1.574 * w - 0.176 * (Math.Pow(w, 2))) * (1 - Math.Pow(Tr, 0.5))), 2);
+        }
+        double pr_a(double Tr, double w)
+        {
+            return Math.Pow((1 + (0.37464 + 1.54226 * w - 0.26992 * (Math.Pow(w, 2))) * (1 - Math.Pow(Tr, 0.5))), 2);
         }
 
-        private void groupBox2_Enter(object sender, EventArgs e)
+        private void setConstantTable(ref s_constant constants, e_EquType type, double Pr, double Tr, double w = 0)
         {
-
-        }
-
-        private void groupBox1_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void vaporLike_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.vdw_vaporLike.Checked == true)
+            constants.Pr = Pr;
+            constants.Tr = Tr;
+            constants.w = w;
+            switch (type)
             {
-                this.vdw_liquidLike.Checked = false;
+                case e_EquType.vdw:
+                    constants.alpha = 1;
+                    constants.sigma = 0;
+                    constants.upsilon = 0;
+                    constants.omega = (double)1 / 8;
+                    constants.psi = (double)27 / 64;
+                    constants.Zc = (double)3 / 8;
+                    break;
+                case e_EquType.rk:
+                    constants.alpha_oneArg = rk_a;
+                    constants.sigma = 1;
+                    constants.upsilon = 0;
+                    constants.omega = (double)0.08664;
+                    constants.psi = (double)0.42748;
+                    constants.Zc = (double)1 / 3;
+                    break;
+                case e_EquType.srk:
+                    constants.alpha_twoArg = srk_a;
+                    constants.sigma = 1;
+                    constants.upsilon = 0;
+                    constants.omega = (double)0.08664;
+                    constants.psi = (double)0.42748;
+                    constants.Zc = (double)1 / 3;
+                    break;
+                case e_EquType.pr:
+                    constants.alpha_twoArg = pr_a;
+                    constants.sigma = 1 + Math.Sqrt(2);
+                    constants.upsilon = 1 - Math.Sqrt(2);
+                    constants.omega = (double)0.07780;
+                    constants.psi = (double)0.45724;
+                    constants.Zc = (double)0.30740;
+                    break;
+            }
+        }
+
+        private static s_return Calculating(ref s_constant constants, e_PhaseType phase, e_EquType type)
+        {
+            s_return value;
+            value.beta = constants.omega * constants.Pr / constants.Tr;
+            value.q = (constants.psi / (constants.omega * constants.Tr));
+            if (type == e_EquType.vdw)
+                value.q *= (double)constants.alpha;
+            else if (type == e_EquType.rk)
+                value.q *= (double)constants.alpha_oneArg(constants.Tr);
+            else if (type == e_EquType.srk)
+                value.q *= constants.alpha_twoArg(constants.Tr, constants.w);
+            else
+                value.q *= constants.alpha_twoArg(constants.Tr, constants.w);
+            if (phase == e_PhaseType.liquid)
+            {
+                double Z = value.beta;
+                for (int i = 0; i < 30; i++)
+                {
+                    Z = value.beta + (Z + constants.upsilon * value.beta) * (Z + constants.sigma * value.beta) * (1 + value.beta - Z) / (value.q * value.beta);
+                }
+                value.z = Z;
             }
             else
             {
-                this.vdw_liquidLike.Checked = true;
+                double Z = 1;
+                for (int i = 0; i < 30; i++)
+                {
+                    Z = 1 + value.beta - (value.q * value.beta) * (Z - value.beta) / ((Z + constants.upsilon * value.beta) * (Z + constants.sigma * value.beta));
+                }
+                value.z = Z;
             }
-        }
-
-        private void liquidLike_CheckedChanged(object sender, EventArgs e)
-        {
-            if (this.vdw_liquidLike.Checked == true)
-            {
-                this.vdw_vaporLike.Checked = false;
-            }
-            else
-            {
-                this.vdw_vaporLike.Checked = true;
-            }
-        }
-
-        private void groupBox5_Enter(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox5_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Tr_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void betaValue_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click_1(object sender, EventArgs e)
-        {
-                
-        }
-
-        private void qValue_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void output_Enter(object sender, EventArgs e)
-        {
-        }
-
-        private void VDW_Enter(object sender, EventArgs e)
-        {
-          
+            return value;
         }
 
         private void vdw_button_Click(object sender, EventArgs e)
@@ -133,24 +160,34 @@ namespace cubicEquation
             GroupBox input_box = (GroupBox)(this.VDW.Controls["vdw_input"]);
             TextBox Pr = (TextBox)(input_box.Controls["vdw_Pr"]);
             TextBox Tr = (TextBox)(input_box.Controls["vdw_Tr"]);
-            int value = 0;
+
             try
             {
-                value = int.Parse(Pr.Text) + int.Parse(Tr.Text);
+                double test = 0;
+                test = double.Parse(Pr.Text) + double.Parse(Tr.Text);
             }
             catch
             {
-                MessageBox.Show("Pr과 Tr에 알맞은 값을 넣어주세요.");
+                MessageBox.Show("Input value에 알맞은 값을 넣어주세요.");
+                return;
             }
-
 
             GroupBox output_box = (GroupBox)(this.VDW.Controls["vdw_output"]);
             Label beta = (Label)(output_box.Controls["vdw_betaValue"]);
             Label q = (Label)(output_box.Controls["vdw_qValue"]);
             Label z = (Label)(output_box.Controls["vdw_zValue"]);
-            beta.Text = (value * 2).ToString(); beta.Visible = true;
-            q.Text = value.ToString(); q.Visible = true;
-            z.Text = (value * 4).ToString(); z.Visible = true;
+            s_constant constants = new s_constant();
+            s_return return_value;
+            setConstantTable(ref constants, e_EquType.vdw, double.Parse(Pr.Text), double.Parse(Tr.Text));
+            if (vaporLike.Checked == true)
+                return_value = Calculating(ref constants, e_PhaseType.vapor, e_EquType.vdw);
+            else
+                return_value = Calculating(ref constants, e_PhaseType.liquid, e_EquType.vdw);
+
+            beta.Visible = true; q.Visible = true; z.Visible = true;
+            beta.Text = Math.Round(return_value.beta, 5).ToString();
+            q.Text = Math.Round(return_value.q, 5).ToString();
+            z.Text = Math.Round(return_value.z, 5).ToString();
         }
 
         private void rk_button_Click(object sender, EventArgs e)
@@ -167,23 +204,34 @@ namespace cubicEquation
             GroupBox input_box = (GroupBox)(this.RK.Controls["rk_input"]);
             TextBox Pr = (TextBox)(input_box.Controls["rk_Pr"]);
             TextBox Tr = (TextBox)(input_box.Controls["rk_Tr"]);
-            int value = 0;
+
             try
             {
-                value = int.Parse(Pr.Text) + int.Parse(Tr.Text);
+                double test = 0;
+                test = double.Parse(Pr.Text) + double.Parse(Tr.Text);
             }
             catch
             {
-                MessageBox.Show("Pr과 Tr에 알맞은 값을 넣어주세요.");
+                MessageBox.Show("Input value에 알맞은 값을 넣어주세요.");
+                return;
             }
+
+            s_constant constants = new s_constant();
+            s_return return_value;
+            setConstantTable(ref constants, e_EquType.rk, double.Parse(Pr.Text), double.Parse(Tr.Text));
+            if (vaporLike.Checked == true)
+                return_value = Calculating(ref constants, e_PhaseType.vapor, e_EquType.rk);
+            else
+                return_value = Calculating(ref constants, e_PhaseType.liquid, e_EquType.rk);
 
             GroupBox output_box = (GroupBox)(this.RK.Controls["rk_output"]);
             Label beta = (Label)(output_box.Controls["rk_betaValue"]);
             Label q = (Label)(output_box.Controls["rk_qValue"]);
             Label z = (Label)(output_box.Controls["rk_zValue"]);
-            beta.Text = (value * 2).ToString(); beta.Visible = true;
-            q.Text = value.ToString(); q.Visible = true;
-            z.Text = (value * 4).ToString(); z.Visible = true;
+            beta.Visible = true; q.Visible = true; z.Visible = true;
+            beta.Text = Math.Round(return_value.beta, 5).ToString();
+            q.Text = Math.Round(return_value.q, 5).ToString();
+            z.Text = Math.Round(return_value.z, 5).ToString();
         }
 
         private void sdk_button_Click(object sender, EventArgs e)
@@ -200,26 +248,38 @@ namespace cubicEquation
             GroupBox input_box = (GroupBox)(this.SRK.Controls["srk_input"]);
             TextBox Pr = (TextBox)(input_box.Controls["srk_Pr"]);
             TextBox Tr = (TextBox)(input_box.Controls["srk_Tr"]);
-            int value = 0;
+            TextBox w = (TextBox)(input_box.Controls["srk_w"]);
+ 
             try
             {
-                value = int.Parse(Pr.Text) + int.Parse(Tr.Text);
+                double test = 0;
+                test = double.Parse(Pr.Text) + double.Parse(Tr.Text) + double.Parse(w.Text);
             }
             catch
             {
-                MessageBox.Show("Pr과 Tr에 알맞은 값을 넣어주세요.");
+                MessageBox.Show("Input value에 알맞은 값을 넣어주세요.");
+                return;
             }
+
+            s_constant constants = new s_constant();
+            s_return return_value;
+            setConstantTable(ref constants, e_EquType.srk, double.Parse(Pr.Text), double.Parse(Tr.Text), double.Parse(w.Text));
+            if (vaporLike.Checked == true)
+                return_value = Calculating(ref constants, e_PhaseType.vapor, e_EquType.srk);
+            else
+                return_value = Calculating(ref constants, e_PhaseType.liquid, e_EquType.srk);
 
             GroupBox output_box = (GroupBox)(this.SRK.Controls["srk_output"]);
             Label beta = (Label)(output_box.Controls["srk_betaValue"]);
             Label q = (Label)(output_box.Controls["srk_qValue"]);
             Label z = (Label)(output_box.Controls["srk_zValue"]);
-            beta.Text = (value * 2).ToString(); beta.Visible = true;
-            q.Text = value.ToString(); q.Visible = true;
-            z.Text = (value * 4).ToString(); z.Visible = true;
+            beta.Visible = true; q.Visible = true; z.Visible = true;
+            beta.Text = Math.Round(return_value.beta, 5).ToString();
+            q.Text = Math.Round(return_value.q, 5).ToString();
+            z.Text = Math.Round(return_value.z, 5).ToString();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void pr_button_Click(object sender, EventArgs e)
         {
             GroupBox root = (GroupBox)(this.PR.Controls["pr_root"]);
             CheckBox vaporLike = (CheckBox)(root.Controls["pr_vaporLike"]);
@@ -233,23 +293,81 @@ namespace cubicEquation
             GroupBox input_box = (GroupBox)(this.PR.Controls["pr_input"]);
             TextBox Pr = (TextBox)(input_box.Controls["pr_Pr"]);
             TextBox Tr = (TextBox)(input_box.Controls["pr_Tr"]);
-            int value = 0;
+            TextBox w = (TextBox)(input_box.Controls["pr_w"]);
             try
             {
-                value = int.Parse(Pr.Text) + int.Parse(Tr.Text);
+                double test = 0;
+                test = double.Parse(Pr.Text) + double.Parse(Tr.Text) + double.Parse(w.Text);
             }
             catch
             {
-                MessageBox.Show("Pr과 Tr에 알맞은 값을 넣어주세요.");
+                MessageBox.Show("Input value에 알맞은 값을 넣어주세요.");
+                return;
             }
+
+            s_constant constants = new s_constant();
+            s_return return_value;
+            setConstantTable(ref constants, e_EquType.pr, double.Parse(Pr.Text), double.Parse(Tr.Text), double.Parse(w.Text));
+            if (vaporLike.Checked == true)
+                return_value = Calculating(ref constants, e_PhaseType.vapor, e_EquType.pr);
+            else
+                return_value = Calculating(ref constants, e_PhaseType.liquid, e_EquType.pr);
 
             GroupBox output_box = (GroupBox)(this.PR.Controls["pr_output"]);
             Label beta = (Label)(output_box.Controls["pr_betaValue"]);
             Label q = (Label)(output_box.Controls["pr_qValue"]);
             Label z = (Label)(output_box.Controls["pr_zValue"]);
-            beta.Text = (value * 2).ToString(); beta.Visible = true;
-            q.Text = value.ToString(); q.Visible = true;
-            z.Text = (value * 4).ToString(); z.Visible = true;
+            beta.Visible = true; q.Visible = true; z.Visible = true;
+            beta.Text = Math.Round(return_value.beta, 5).ToString();
+            q.Text = Math.Round(return_value.q, 5).ToString();
+            z.Text = Math.Round(return_value.z, 5).ToString();
+        }
+
+        private void vaporLike_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.vdw_vaporLike.Checked == true)
+                this.vdw_liquidLike.Checked = false;
+        }
+
+        private void liquidLike_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.vdw_liquidLike.Checked == true)
+                this.vdw_vaporLike.Checked = false;
+        }
+        private void rk_vaporLike_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.rk_vaporLike.Checked == true)
+                this.rk_liquidLike.Checked = false;
+        }
+
+        private void rk_liquidLike_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.rk_liquidLike.Checked == true)
+                this.rk_vaporLike.Checked = false;
+        }
+
+        private void srk_vaporLike_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.srk_vaporLike.Checked == true)
+                this.srk_liquidLike.Checked = false;
+        }
+
+        private void srk_liquidLike_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.srk_liquidLike.Checked == true)
+                this.srk_vaporLike.Checked = false;
+        }
+
+        private void pr_vaporLike_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.pr_vaporLike.Checked == true)
+                this.pr_liquidLike.Checked = false;
+        }
+
+        private void pr_liquidLike_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.pr_liquidLike.Checked == true)
+                this.pr_vaporLike.Checked = false;
         }
     }
 }
